@@ -11,6 +11,8 @@ services:
       - 3000:3000
     networks:
       - app_network
+    environment:
+      - NEXT_PUBLIC_API_HOST={{NEXT_PUBLIC_API_HOST}}
   api:
     container_name: api
     build:
