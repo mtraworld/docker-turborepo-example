@@ -38,6 +38,7 @@ export default function Web() {
   return (
     <div>
       <h1>Web</h1>
+      <pre>{JSON.stringify(process.env, null, 2)}</pre>
       <form onSubmit={onSubmit}>
         <label htmlFor="name">Name </label>
         <input
