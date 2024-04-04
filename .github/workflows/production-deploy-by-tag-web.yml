@@ -6,7 +6,7 @@ on:
   push:
     # Pattern matched against refs/tags
     tags-ignore:
-      - '*/staging*' # Exclude tags containing "staging"
+      - '*-staging*' # Exclude tags containing "staging"
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
