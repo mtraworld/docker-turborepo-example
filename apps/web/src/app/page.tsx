@@ -6,6 +6,7 @@ export default function Web() {
   return (
     <div>
       <h1>{title}</h1>
+      <p>Hello {title}</p>
     </div>
   );
 }
