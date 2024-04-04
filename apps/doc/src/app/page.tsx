@@ -7,6 +7,7 @@ export default function Doc() {
     <div>
       <h1>{title}</h1>
       <p>Hello {title}</p>
+      <p>test test</p>
     </div>
   );
 }
