@@ -11,6 +11,9 @@ jobs:
   Deploy-Production:
     # runs-on: ubuntu-latest
     runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
       - uses: actions/checkout@v3
       - name: Install Node.js
