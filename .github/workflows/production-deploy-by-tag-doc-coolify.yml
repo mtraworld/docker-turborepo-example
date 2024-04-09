@@ -23,11 +23,10 @@ jobs:
 
       - name: Print Tag Name
         run: |
-         echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
 
       - name: cURL request
-        if: ${{ env.COOLIFY_SERVER_URL && GITHUB_REF_NAME && env.COOLIFY_TOKEN && env.COOLIFY_PROJECT_ID }}
+        if: ${{ env.COOLIFY_SERVER_URL && github.ref_name && env.COOLIFY_TOKEN && env.COOLIFY_PROJECT_ID }}
         run: |
           curl --request GET \
             --url ${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}&tag=${GITHUB_REF_NAME} \
