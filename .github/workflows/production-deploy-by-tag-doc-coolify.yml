@@ -20,13 +20,9 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Print Tag Name
-        run: |
-         echo "Tag name from github.ref_name: ${{  github.ref_name }}"
-
       - name: cURL request
         if: ${{ env.COOLIFY_SERVER_URL && github.ref_name && env.COOLIFY_TOKEN && env.COOLIFY_PROJECT_ID }}
         run: |
           curl --request GET \
-            --url '${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}&tag=${{ github.ref_name }}' \
+            --url '${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}' \
             --header "Authorization: Bearer ${{ env.COOLIFY_TOKEN }}"
