@@ -26,11 +26,7 @@ jobs:
 
       - name: cURL request
         if: ${{ env.COOLIFY_SERVER_URL && github.ref_name && env.COOLIFY_TOKEN && env.COOLIFY_PROJECT_ID }}
-        # run: |
-        #   curl --request GET \
-        #     --url "${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}&tag=${{ github.ref_name }}" \
-        #     --header "Authorization: Bearer ${{ env.COOLIFY_TOKEN }}"
         run: |
-          curl ${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}&tag=${{ github.ref_name }} \
-          -H 'content-type: application/json' \
-          -H 'authorization: Bearer ${{ secrets.CRON_API_KEY }}'
+          curl --request GET \
+            --url '${{ env.COOLIFY_SERVER_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_PROJECT_ID }}&tag=${{ github.ref_name }}' \
+            --header "Authorization: Bearer ${{ env.COOLIFY_TOKEN }}"
