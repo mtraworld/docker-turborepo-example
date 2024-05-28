@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev -p 5001",
     "lint": "eslint . --max-warnings 0",
-    "start": "next start -p 5001"
+    "start": "node .next/standalone/server.js -p 5001"
   },
   "dependencies": {
     "next": "^14.1.1",
