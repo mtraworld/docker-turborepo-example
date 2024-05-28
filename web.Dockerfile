@@ -21,6 +21,7 @@ RUN turbo prune --scope=${PROJECT} --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
+ARG PROJECT=web
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
