@@ -59,7 +59,7 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/public ./apps/$
 
 WORKDIR /app/apps/${PROJECT}
 
-ARG PORT=5000
+ARG PORT=3010
 ENV PORT=${PORT}
 ENV NODE_ENV=production
 EXPOSE ${PORT}
