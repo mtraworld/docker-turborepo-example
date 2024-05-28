@@ -17,6 +17,8 @@ WORKDIR /app
 # RUN npm install -g pnpm
 RUN pnpm add turbo --global
 COPY . .
+RUN echo "project=${PROJECT}"
+RUN pwd
 RUN turbo prune --scope=${PROJECT} --docker
 
 # Add lockfile and package.json's of isolated subworkspace
