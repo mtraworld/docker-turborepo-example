@@ -1,5 +1,6 @@
 ARG NODE_VERSION=20
 ARG PROJECT=web
+ENV PROJECT=${PROJECT}
 FROM node:${NODE_VERSION}-alpine AS alpine
 
 FROM alpine AS base
@@ -18,7 +19,6 @@ WORKDIR /app
 RUN pnpm add turbo --global
 COPY . .
 RUN echo "project=${PROJECT}"
-RUN pwd
 RUN turbo prune --scope=${PROJECT} --docker
 
 # Add lockfile and package.json's of isolated subworkspace
