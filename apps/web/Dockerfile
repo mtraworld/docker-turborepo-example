@@ -1,7 +1,8 @@
-FROM node:18-alpine AS base
+ARG NODE_VERSION=20
+ARG PROJECT=web
+FROM node:${NODE_VERSION}-alpine AS alpine
 
-# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
-# Make sure you update both files!
+FROM alpine AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -16,7 +17,7 @@ WORKDIR /app
 # RUN npm install -g pnpm
 RUN pnpm add turbo --global
 COPY . .
-RUN turbo prune web --docker
+RUN turbo prune --scope=${PROJECT} --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -28,6 +29,7 @@ WORKDIR /app
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN pnpm install
 
 # Build the project
@@ -41,7 +43,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN pnpm turbo build --filter=web...
+RUN pnpm turbo build --filter=${PROJECT}
 
 FROM base AS runner
 WORKDIR /app
@@ -51,13 +53,20 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/web/next.config.js .
-COPY --from=installer /app/apps/web/package.json .
+COPY --from=installer /app/apps/${PROJECT}/next.config.js .
+COPY --from=installer /app/apps/${PROJECT}/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./apps/${PROJECT}/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/public ./apps/${PROJECT}/public
 
-CMD node apps/web/server.js
+WORKDIR /app/apps/${PROJECT}
+
+ARG PORT=5000
+ENV PORT=${PORT}
+ENV NODE_ENV=production
+EXPOSE ${PORT}
+
+CMD ["node", "server.js"]
