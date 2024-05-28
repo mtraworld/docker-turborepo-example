@@ -1,6 +1,4 @@
 ARG NODE_VERSION=20
-ARG PROJECT=web
-ENV PROJECT=${PROJECT}
 FROM node:${NODE_VERSION}-alpine AS alpine
 
 FROM alpine AS base
@@ -18,8 +16,7 @@ WORKDIR /app
 # RUN npm install -g pnpm
 RUN pnpm add turbo --global
 COPY . .
-RUN echo "project=${PROJECT}"
-RUN turbo prune --scope=${PROJECT} --docker
+RUN turbo prune --scope=web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -45,7 +42,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN pnpm turbo build --filter=${PROJECT}
+RUN pnpm turbo build --filter=web
 
 FROM base AS runner
 WORKDIR /app
@@ -55,16 +52,16 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/${PROJECT}/next.config.js .
-COPY --from=installer /app/apps/${PROJECT}/package.json .
+COPY --from=installer /app/apps/web/next.config.js .
+COPY --from=installer /app/apps/web/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./apps/${PROJECT}/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/${PROJECT}/public ./apps/${PROJECT}/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-WORKDIR /app/apps/${PROJECT}
+WORKDIR /app/apps/web
 
 ARG PORT=5000
 ENV PORT=${PORT}
