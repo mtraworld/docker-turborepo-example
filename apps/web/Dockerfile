@@ -16,6 +16,7 @@ ARG PROJECT=web
 
 WORKDIR /app
 COPY . .
+RUN cat /app/package.json
 RUN turbo prune --scope=${PROJECT} --docker
 
 # Build the project
